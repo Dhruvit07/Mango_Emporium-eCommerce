@@ -1,50 +1,38 @@
 <?php
 header("Content-type: text/css; charset: UTF-8");
-
-  $color = '#FFCC00';
-
-  $header_color = '#ffffff';
-
-  $footer_color = '#15161D';
-
-  $copyright_color = '#1E1F29';
-
-  // $menu_color = '#02020c';
-
-  // $menu_hover_color = '#02020c';
-
-?>
-
-
-
-.top-header .content .right-content .list ul li .language-selector .language {
-  background: <?php echo $header_color; ?>;}
-.top-header .content .right-content .list ul li .currency-selector .currency {
-  background: <?php echo $header_color; ?>;}
-
-.logo-header {
-  background: <?php echo $header_color; ?>; }
-  
-.logo-header .search-box .categori-container .categoris option {
-  background: <?php echo $header_color; ?>; }
-
-.autocomplete-items div {
-  background: <?php echo $header_color; ?>;
-  border: 0.5px solid <?php echo $header_color; ?>;
+if(isset($_GET['color']))
+{
+  $color = '#'.$_GET['color'];
+}
+else {
+  $color = '#0f78f2';
 }
 
+if(isset($_GET['footer_color']))
+{
+  $footer_color = '#'.$_GET['footer_color'];
+}
+else {
+  $footer_color = '#143250';
+}
 
+if(isset($_GET['copyright_color']))
+{
+  $copyright_color = '#'.$_GET['copyright_color'];
+}
+else {
+  $copyright_color = '#02020c';
+}
 
-
+?>
 
 .footer {
   background: <?php echo $footer_color; ?>;
 }
 
-
-
-  .footer .copy-bg {
-    background: <?php echo $copyright_color; ?>; }
+.footer .copy-bg {
+  background: <?php echo $copyright_color; ?>; 
+}
 
 .mybtn1,
 .bottomtotop i,

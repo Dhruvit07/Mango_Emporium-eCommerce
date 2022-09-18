@@ -20,18 +20,18 @@ class BlogController extends Controller
     //*** JSON Request
     public function datatables()
     {
-         $datas = Blog::orderBy('id','desc')->get();
-         //--- Integrating This Collection Into Datatables
-         return Datatables::of($datas)
-                            ->editColumn('photo', function(Blog $data) {
-                                $photo = $data->photo ? url('assets/images/blogs/'.$data->photo):url('assets/images/noimage.png');
-                                return '<img src="' . $photo . '" alt="Image">';
-                            })
-                            ->addColumn('action', function(Blog $data) {
-                                return '<div class="action-list"><a data-href="' . route('admin-blog-edit',$data->id) . '" class="edit" data-toggle="modal" data-target="#modal1"> <i class="fas fa-edit"></i>Edit</a><a href="javascript:;" data-href="' . route('admin-blog-delete',$data->id) . '" data-toggle="modal" data-target="#confirm-delete" class="delete"><i class="fas fa-trash-alt"></i></a></div>';
-                            }) 
-                            ->rawColumns(['photo', 'action'])
-                            ->toJson(); //--- Returning Json Data To Client Side
+        $datas = Blog::orderBy('id', 'desc')->get();
+        //--- Integrating This Collection Into Datatables
+        return Datatables::of($datas)
+            ->editColumn('photo', function (Blog $data) {
+                $photo = $data->photo ? url('assets/images/blogs/' . $data->photo) : url('assets/images/noimage.png');
+                return '<img src="' . $photo . '" alt="Image">';
+            })
+            ->addColumn('action', function (Blog $data) {
+                return '<div class="action-list"><a data-href="' . route('admin-blog-edit', $data->id) . '" class="edit" data-toggle="modal" data-target="#modal1"> <i class="fas fa-edit"></i>Edit</a><a href="javascript:;" data-href="' . route('admin-blog-delete', $data->id) . '" data-toggle="modal" data-target="#confirm-delete" class="delete"><i class="fas fa-trash-alt"></i></a></div>';
+            })
+            ->rawColumns(['photo', 'action'])
+            ->toJson(); //--- Returning Json Data To Client Side
     }
 
     //*** GET Request
@@ -44,7 +44,7 @@ class BlogController extends Controller
     public function create()
     {
         $cats = BlogCategory::all();
-        return view('admin.blog.create',compact('cats'));
+        return view('admin.blog.create', compact('cats'));
     }
 
     //*** POST Request
@@ -52,44 +52,40 @@ class BlogController extends Controller
     {
         //--- Validation Section
         $rules = [
-               'photo'      => 'required|mimes:jpeg,jpg,png,svg',
-                ];
+            'photo'      => 'required|mimes:jpeg,jpg,png,svg',
+        ];
 
         $validator = Validator::make(Input::all(), $rules);
-        
+
         if ($validator->fails()) {
-          return response()->json(array('errors' => $validator->getMessageBag()->toArray()));
+            return response()->json(array('errors' => $validator->getMessageBag()->toArray()));
         }
         //--- Validation Section Ends
 
         //--- Logic Section
         $data = new Blog();
         $input = $request->all();
-        if ($file = $request->file('photo')) 
-         {      
-            $name = time().$file->getClientOriginalName();
-            $file->move('assets/images/blogs',$name);           
+        if ($file = $request->file('photo')) {
+            $name = time() . $file->getClientOriginalName();
+            $file->move(public_path('assets/images/blogs'), $name);
             $input['photo'] = $name;
-        } 
-        if (!empty($request->meta_tag)) 
-         {
-            $input['meta_tag'] = implode(',', $request->meta_tag);       
-         }  
-        if (!empty($request->tags)) 
-         {
-            $input['tags'] = implode(',', $request->tags);       
-         }
-        if ($request->secheck == "") 
-         {
+        }
+        if (!empty($request->meta_tag)) {
+            $input['meta_tag'] = implode(',', $request->meta_tag);
+        }
+        if (!empty($request->tags)) {
+            $input['tags'] = implode(',', $request->tags);
+        }
+        if ($request->secheck == "") {
             $input['meta_tag'] = null;
-            $input['meta_description'] = null;         
-         } 
+            $input['meta_description'] = null;
+        }
         $data->fill($input)->save();
         //--- Logic Section Ends
 
         //--- Redirect Section        
         $msg = 'New Data Added Successfully.';
-        return response()->json($msg);      
+        return response()->json($msg);
         //--- Redirect Section Ends    
     }
 
@@ -98,7 +94,7 @@ class BlogController extends Controller
     {
         $cats = BlogCategory::all();
         $data = Blog::findOrFail($id);
-        return view('admin.blog.edit',compact('data','cats'));
+        return view('admin.blog.edit', compact('data', 'cats'));
     }
 
     //*** POST Request
@@ -106,56 +102,49 @@ class BlogController extends Controller
     {
         //--- Validation Section
         $rules = [
-               'photo'      => 'mimes:jpeg,jpg,png,svg',
-                ];
+            'photo'      => 'mimes:jpeg,jpg,png,svg',
+        ];
 
         $validator = Validator::make(Input::all(), $rules);
-        
+
         if ($validator->fails()) {
-          return response()->json(array('errors' => $validator->getMessageBag()->toArray()));
+            return response()->json(array('errors' => $validator->getMessageBag()->toArray()));
         }
         //--- Validation Section Ends
 
         //--- Logic Section
         $data = Blog::findOrFail($id);
         $input = $request->all();
-            if ($file = $request->file('photo')) 
-            {              
-                $name = time().$file->getClientOriginalName();
-                $file->move('assets/images/blogs',$name);
-                if($data->photo != null)
-                {
-                    if (file_exists(public_path().'/assets/images/blogs/'.$data->photo)) {
-                        unlink(public_path().'/assets/images/blogs/'.$data->photo);
-                    }
-                }            
+        if ($file = $request->file('photo')) {
+            $name = time() . $file->getClientOriginalName();
+            $file->move(public_path('assets/images/blogs'), $name);
+            if ($data->photo != null) {
+                if (file_exists(public_path('/assets/images/blogs/') . $data->photo)) {
+                    unlink(public_path('/assets/images/blogs/') . $data->photo);
+                }
+            }
             $input['photo'] = $name;
-            } 
-        if (!empty($request->meta_tag)) 
-         {
-            $input['meta_tag'] = implode(',', $request->meta_tag);       
-         } 
-        else {
+        }
+        if (!empty($request->meta_tag)) {
+            $input['meta_tag'] = implode(',', $request->meta_tag);
+        } else {
             $input['meta_tag'] = null;
-         }
-        if (!empty($request->tags)) 
-         {
-            $input['tags'] = implode(',', $request->tags);       
-         }
-        else {
+        }
+        if (!empty($request->tags)) {
+            $input['tags'] = implode(',', $request->tags);
+        } else {
             $input['tags'] = null;
-         } 
-        if ($request->secheck == "") 
-         {
+        }
+        if ($request->secheck == "") {
             $input['meta_tag'] = null;
-            $input['meta_description'] = null;         
-         } 
+            $input['meta_description'] = null;
+        }
         $data->update($input);
         //--- Logic Section Ends
 
         //--- Redirect Section     
         $msg = 'Data Updated Successfully.';
-        return response()->json($msg);      
+        return response()->json($msg);
         //--- Redirect Section Ends            
     }
 
@@ -164,21 +153,21 @@ class BlogController extends Controller
     {
         $data = Blog::findOrFail($id);
         //If Photo Doesn't Exist
-        if($data->photo == null){
+        if ($data->photo == null) {
             $data->delete();
             //--- Redirect Section     
             $msg = 'Data Deleted Successfully.';
-            return response()->json($msg);      
+            return response()->json($msg);
             //--- Redirect Section Ends     
         }
         //If Photo Exist
-        if (file_exists(public_path().'/assets/images/blogs/'.$data->photo)) {
-            unlink(public_path().'/assets/images/blogs/'.$data->photo);
+        if (file_exists(public_path('/assets/images/blogs/') . $data->photo)) {
+            unlink(public_path('/assets/images/blogs/') . $data->photo);
         }
         $data->delete();
         //--- Redirect Section     
         $msg = 'Data Deleted Successfully.';
-        return response()->json($msg);      
+        return response()->json($msg);
         //--- Redirect Section Ends     
     }
 }

@@ -66,7 +66,7 @@ class PartnerController extends Controller
         if ($file = $request->file('photo')) 
          {      
             $name = time().$file->getClientOriginalName();
-            $file->move('assets/images/partner',$name);           
+            $file->move(public_path('assets/images/partner'),$name);           
             $input['photo'] = $name;
         } 
         if (!empty($request->meta_tag)) 
@@ -119,11 +119,11 @@ class PartnerController extends Controller
             if ($file = $request->file('photo')) 
             {              
                 $name = time().$file->getClientOriginalName();
-                $file->move('assets/images/partner',$name);
+                $file->move(public_path('assets/images/partner'),$name);
                 if($data->photo != null)
                 {
-                    if (file_exists(public_path().'/assets/images/partner/'.$data->photo)) {
-                        unlink(public_path().'/assets/images/partner/'.$data->photo);
+                    if (file_exists(public_path('/assets/images/partner/').$data->photo)) {
+                        unlink(public_path('/assets/images/partner/').$data->photo);
                     }
                 }            
             $input['photo'] = $name;
@@ -169,8 +169,8 @@ class PartnerController extends Controller
             //--- Redirect Section Ends     
         }
         //If Photo Exist
-        if (file_exists(public_path().'/assets/images/partner/'.$data->photo)) {
-            unlink(public_path().'/assets/images/partner/'.$data->photo);
+        if (file_exists(public_path('/assets/images/partner/').$data->photo)) {
+            unlink(public_path('/assets/images/partner/').$data->photo);
         }
         $data->delete();
         //--- Redirect Section     
